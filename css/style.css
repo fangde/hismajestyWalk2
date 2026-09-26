@@ -1,0 +1,548 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;700;800&family=Noto+Sans+Egyptian+Hieroglyphs&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #1a140f;
+    font-family: 'Cinzel', Georgia, serif;
+    color: #fef08a;
+}
+
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at center, #2e2118 0%, #120e0a 100%);
+}
+
+#gameCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    cursor: grab;
+}
+
+#gameCanvas:active {
+    cursor: grabbing;
+}
+
+/* UI Overlay Layer */
+#ui-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 10;
+}
+
+/* Top Royal Banner Bar */
+.top-bar {
+    pointer-events: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 24px;
+    margin-top: 34px;
+    background: linear-gradient(180deg, rgba(20, 14, 10, 0.88) 0%, rgba(20, 14, 10, 0.45) 80%, rgba(20, 14, 10, 0) 100%);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.royal-title-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.game-logo {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: 24px;
+    font-weight: 900;
+    color: #fbbf24;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-shadow: 0 0 12px rgba(245, 158, 11, 0.6), 0 2px 2px #000;
+}
+
+.mode-pills {
+    display: flex;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #78350f;
+    border-radius: 20px;
+    padding: 2px;
+}
+
+.mode-btn {
+    background: none;
+    border: none;
+    color: #a8a29e;
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.mode-btn.active {
+    background: linear-gradient(135deg, #b45309, #78350f);
+    color: #fef08a;
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+}
+
+/* Stats Container */
+.stats-group {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(18, 13, 10, 0.7);
+    border: 1px solid rgba(217, 119, 6, 0.4);
+    padding: 6px 14px;
+    border-radius: 18px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+.stat-icon {
+    font-size: 16px;
+}
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    font-size: 9px;
+    color: #d6d3d1;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.stat-value {
+    font-size: 14px;
+    font-weight: 800;
+    color: #fbbf24;
+}
+
+/* Devotion Progress Bar */
+.devotion-bar-bg {
+    width: 90px;
+    height: 7px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid #78350f;
+    margin-top: 2px;
+}
+
+.devotion-bar-fill {
+    height: 100%;
+    width: 50%;
+    background: linear-gradient(90deg, #f59e0b, #fef08a);
+    box-shadow: 0 0 6px #f59e0b;
+    transition: width 0.3s ease;
+}
+
+/* Story Progress Tracker */
+#progress-container {
+    display: flex;
+    flex-direction: column;
+    width: 140px;
+}
+
+.progress-bar-bg {
+    width: 100%;
+    height: 7px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid #78350f;
+    margin-top: 2px;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    width: 5%;
+    background: linear-gradient(90deg, #0284c7, #38bdf8);
+    box-shadow: 0 0 6px #38bdf8;
+    transition: width 0.3s ease;
+}
+
+/* Control Buttons in Top Bar */
+.actions-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ui-btn {
+    pointer-events: auto;
+    background: linear-gradient(180deg, #451a03 0%, #290e02 100%);
+    border: 1px solid #d97706;
+    color: #fef08a;
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 7px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.ui-btn:hover {
+    background: linear-gradient(180deg, #78350f 0%, #451a03 100%);
+    border-color: #fbbf24;
+    transform: translateY(-1px);
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
+}
+
+.ui-btn.active {
+    background: linear-gradient(180deg, #b45309 0%, #78350f 100%);
+    border-color: #fef08a;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
+}
+
+/* Blessing Combo Badge */
+#combo-badge {
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: 20px;
+    font-weight: 900;
+    color: #fef08a;
+    text-shadow: 0 0 10px #f59e0b, 0 0 20px #d97706, 0 2px 2px #000;
+    letter-spacing: 2px;
+    animation: pulseCombo 0.8s infinite alternate;
+}
+
+@keyframes pulseCombo {
+    0% { transform: translateX(-50%) scale(1.0); }
+    100% { transform: translateX(-50%) scale(1.1); }
+}
+
+/* Touch Controls on Bottom */
+.bottom-controls {
+    pointer-events: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 32px 52px 32px;
+}
+
+.dpad-container {
+    display: flex;
+    gap: 12px;
+}
+
+.touch-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(120, 53, 15, 0.85) 0%, rgba(41, 14, 2, 0.95) 100%);
+    border: 2px solid #f59e0b;
+    color: #fef08a;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), inset 0 1px 4px rgba(254, 240, 138, 0.4);
+    transition: all 0.15s ease;
+    touch-action: manipulation;
+}
+
+.touch-btn:active {
+    transform: scale(0.92);
+    background: radial-gradient(circle, rgba(180, 83, 9, 0.95) 0%, rgba(120, 53, 15, 0.95) 100%);
+    box-shadow: 0 0 16px #f59e0b;
+}
+
+.bless-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.bless-btn {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #f59e0b 0%, #b45309 60%, #451a03 100%);
+    border: 3px solid #fef08a;
+    color: #ffffff;
+    font-size: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.7), inset 0 2px 6px rgba(255, 255, 255, 0.6);
+    transition: all 0.15s ease;
+    touch-action: manipulation;
+    animation: blessPulse 2s infinite ease-in-out;
+}
+
+@keyframes blessPulse {
+    0%, 100% { box-shadow: 0 0 18px rgba(245, 158, 11, 0.6); }
+    50% { box-shadow: 0 0 28px rgba(254, 240, 138, 0.9); }
+}
+
+.bless-btn:active {
+    transform: scale(0.9);
+    box-shadow: 0 0 35px #fef08a;
+}
+
+.bless-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: #fbbf24;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px #000;
+}
+
+/* Modals */
+.modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 7, 5, 0.88);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0.3s ease;
+}
+
+.modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+    display: none;
+}
+
+.modal-card {
+    background: linear-gradient(135deg, #2a1a11 0%, #190f09 100%);
+    border: 2px solid #d97706;
+    border-radius: 12px;
+    padding: 30px 40px;
+    width: 90%;
+    max-width: 540px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(217, 119, 6, 0.3);
+    text-align: center;
+    position: relative;
+}
+
+.modal-title {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: 26px;
+    font-weight: 900;
+    color: #fbbf24;
+    margin-bottom: 8px;
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+.modal-subtitle {
+    font-size: 13px;
+    color: #d6d3d1;
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+}
+
+.controls-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    text-align: left;
+    margin-bottom: 24px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #78350f;
+}
+
+.control-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.key-badge {
+    background: #451a03;
+    border: 1px solid #f59e0b;
+    color: #fef08a;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+    min-width: 28px;
+    text-align: center;
+}
+
+.control-desc {
+    font-size: 12px;
+    color: #e7e5e4;
+}
+
+.modal-action-btn {
+    background: linear-gradient(180deg, #b45309 0%, #78350f 100%);
+    border: 1px solid #fef08a;
+    color: #ffffff;
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    font-weight: 800;
+    padding: 10px 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    transition: all 0.2s ease;
+}
+
+.modal-action-btn:hover {
+    background: linear-gradient(180deg, #d97706 0%, #92400e 100%);
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.6);
+}
+
+/* Victory Summary */
+.victory-stats {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #78350f;
+}
+
+.victory-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.victory-stat-label {
+    font-size: 10px;
+    color: #a8a29e;
+    letter-spacing: 1px;
+}
+
+.victory-stat-value {
+    font-size: 18px;
+    font-weight: 900;
+    color: #fbbf24;
+    margin-top: 4px;
+}
+
+/* Loading Screen */
+#loading-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #140e0a;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 0.6s ease;
+}
+
+#loading-screen.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loading-logo {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: 38px;
+    font-weight: 900;
+    color: #fbbf24;
+    letter-spacing: 4px;
+    margin-bottom: 8px;
+    text-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+}
+
+.loading-sub {
+    font-size: 14px;
+    color: #d6d3d1;
+    letter-spacing: 2px;
+    margin-bottom: 30px;
+}
+
+.loading-bar-container {
+    width: 280px;
+    height: 8px;
+    background: #2a1a11;
+    border: 1px solid #78350f;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+#loading-bar-fill {
+    width: 10%;
+    height: 100%;
+    background: linear-gradient(90deg, #d97706, #fbbf24);
+    box-shadow: 0 0 10px #fbbf24;
+    transition: width 0.2s ease;
+}
+
+#btn-start-game {
+    background: linear-gradient(180deg, #b45309 0%, #78350f 100%);
+    border: 2px solid #fef08a;
+    color: #ffffff;
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    font-weight: 900;
+    padding: 12px 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.7);
+    transition: all 0.2s ease;
+    animation: startPulse 1.8s infinite alternate;
+}
+
+@keyframes startPulse {
+    0% { transform: scale(1.0); }
+    100% { transform: scale(1.05); box-shadow: 0 0 30px rgba(254, 240, 138, 0.9); }
+}
+
+#btn-start-game.hidden {
+    display: none;
+}

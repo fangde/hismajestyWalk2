@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>His Majesty - The Divine Procession</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="assets/ui/winged_sun_disc.png" type="image/png">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Interactive Game Canvas -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- UI Overlay -->
+        <div id="ui-overlay">
+            <!-- Top Royal Status Bar -->
+            <header class="top-bar">
+                <div class="royal-title-group">
+                    <h1 class="game-logo">His Majesty</h1>
+                    <div class="mode-pills">
+                        <button id="btn-mode-story" class="mode-btn active">Procession</button>
+                        <button id="btn-mode-endless" class="mode-btn">Endless Stride</button>
+                    </div>
+                </div>
+
+                <!-- Stats: Devotion & Treasury -->
+                <div class="stats-group">
+                    <!-- Devotion Meter -->
+                    <div class="stat-item">
+                        <span class="stat-icon">☥</span>
+                        <div class="stat-content">
+                            <span class="stat-label">Devotion</span>
+                            <div class="devotion-bar-bg">
+                                <div id="devotion-bar" class="devotion-bar-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Treasury Counter -->
+                    <div class="stat-item">
+                        <span class="stat-icon">💰</span>
+                        <div class="stat-content">
+                            <span class="stat-label">Treasury</span>
+                            <span id="treasury-count" class="stat-value">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Procession Progress -->
+                    <div id="progress-container" class="stat-item">
+                        <div class="stat-content" style="width: 100%;">
+                            <div style="display: flex; justify-content: space-between; font-size: 9px; color: #d6d3d1;">
+                                <span class="stat-label">Sun Throne</span>
+                                <span id="progress-text">5%</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div id="procession-progress" class="progress-bar-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Controls -->
+                <div class="actions-group">
+                    <button id="btn-toggle-avatar" class="ui-btn" title="Switch Avatar Style [V]">👑 Style: Classic</button>
+                    <button id="btn-auto-walk" class="ui-btn" title="Toggle Auto-Walk [P]">🚶 Auto: OFF</button>
+                    <button id="btn-sound" class="ui-btn" title="Toggle Audio [M]">🔊 Sound: ON</button>
+                    <button id="btn-help" class="ui-btn" title="Help & Decrees">📜 Decree</button>
+                </div>
+            </header>
+
+            <!-- Combo Multiplier Badge -->
+            <div id="combo-badge">x2 BLESSING COMBO!</div>
+
+            <!-- Virtual Touch & Action Controls -->
+            <footer class="bottom-controls">
+                <div class="dpad-container">
+                    <button id="touch-left" class="touch-btn" aria-label="Step Left">◀</button>
+                    <button id="touch-right" class="touch-btn" aria-label="Stride Forward">▶</button>
+                </div>
+
+                <div class="bless-container">
+                    <button id="touch-bless" class="bless-btn" aria-label="Bestow Divine Blessing">☥</button>
+                    <span class="bless-label">BLESS [SPACE]</span>
+                </div>
+            </footer>
+        </div>
+
+        <!-- Help / Royal Decree Modal -->
+        <div id="help-modal" class="modal hidden">
+            <div class="modal-card">
+                <h2 class="modal-title">The Royal Decree</h2>
+                <p class="modal-subtitle">Stride in divine majesty as the Living Horus. As His Majesty passes, all subjects and slaves bow and prostrate in humble reverence.</p>
+
+                <div class="controls-grid">
+                    <div class="control-row">
+                        <span class="key-badge">D / ▶</span>
+                        <span class="control-desc">Stride forward</span>
+                    </div>
+                    <div class="control-row">
+                        <span class="key-badge">A / ◀</span>
+                        <span class="control-desc">Pace backward</span>
+                    </div>
+                    <div class="control-row">
+                        <span class="key-badge">SPACE</span>
+                        <span class="control-desc">Bestow Scepter Blessing</span>
+                    </div>
+                    <div class="control-row">
+                        <span class="key-badge">Q</span>
+                        <span class="control-desc">Sistrum of Total Submission</span>
+                    </div>
+                    <div class="control-row">
+                        <span class="key-badge">SHIFT</span>
+                        <span class="control-desc">Swift Imperial Stride</span>
+                    </div>
+                    <div class="control-row">
+                        <span class="key-badge">V</span>
+                        <span class="control-desc">Switch Pharaoh / Portrait Avatar</span>
+                    </div>
+                    <div class="control-row">
+                        <span class="key-badge">C</span>
+                        <span class="control-desc">Toggle Camera Cinematic Zoom</span>
+                    </div>
+                    <div class="control-row">
+                        <span class="key-badge">P</span>
+                        <span class="control-desc">Toggle Auto-Procession</span>
+                    </div>
+                </div>
+
+                <button id="btn-close-help" class="modal-action-btn">Return to Procession</button>
+            </div>
+        </div>
+
+        <!-- Coronation Victory Modal -->
+        <div id="victory-modal" class="modal hidden">
+            <div class="modal-card">
+                <h2 class="modal-title">The Coronation of Horus</h2>
+                <p class="modal-subtitle">His Majesty has ascended the Grand Sun Temple and seated upon the Golden Throne. The Two Lands unite in boundless adoration!</p>
+
+                <div style="margin: 12px 0; font-size: 16px; font-weight: 800; color: #fbbf24;" id="vic-title">
+                    Living Horus & Eternal Sun God
+                </div>
+
+                <div class="victory-stats">
+                    <div class="victory-stat-item">
+                        <span class="victory-stat-label">Treasury</span>
+                        <span id="vic-treasury" class="victory-stat-value">0</span>
+                    </div>
+                    <div class="victory-stat-item">
+                        <span class="victory-stat-label">Blessed</span>
+                        <span id="vic-blessings" class="victory-stat-value">0</span>
+                    </div>
+                    <div class="victory-stat-item">
+                        <span class="victory-stat-label">March</span>
+                        <span id="vic-distance" class="victory-stat-value">0</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px; justify-content: center; margin-top: 18px;">
+                    <button id="btn-play-again" class="modal-action-btn">Replay Procession</button>
+                    <button id="btn-continue-endless" class="modal-action-btn" style="background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%); border-color: #38bdf8;">Endless Stride</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loading-screen">
+            <div class="loading-logo">His Majesty</div>
+            <div class="loading-sub">Preparing the Royal Procession...</div>
+            <div class="loading-bar-container">
+                <div id="loading-bar-fill"></div>
+            </div>
+            <button id="btn-start-game" class="hidden">Enter the Imperial Palace</button>
+        </div>
+    </div>
+
+    <!-- Game Scripts -->
+    <script src="js/audio.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/king.js"></script>
+    <script src="js/subject.js"></script>
+    <script src="js/world.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
