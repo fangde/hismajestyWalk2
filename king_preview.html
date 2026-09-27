@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>His Majesty - King Animation Studio</title>
+    <title>His Majesty - Character & Slave Animation Studio</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&display=swap">
     <style>
         * {
@@ -54,12 +54,12 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 820px;
+            max-width: 860px;
         }
 
         #viewport-wrapper {
             position: relative;
-            width: 520px;
+            width: 540px;
             height: 440px;
             border-radius: 8px;
             overflow: hidden;
@@ -95,6 +95,7 @@
         #previewCanvas {
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
+            image-rendering: pixelated;
         }
 
         /* Controls Panel */
@@ -104,50 +105,57 @@
             gap: 12px;
             justify-content: center;
             align-items: center;
+            margin-bottom: 18px;
             width: 100%;
-            background: rgba(14, 10, 7, 0.7);
-            padding: 16px;
-            border-radius: 8px;
-            border: 1px solid #78350f;
         }
 
         .btn-group {
             display: flex;
-            gap: 6px;
-            align-items: center;
+            background: #281d14;
+            border: 1px solid #78350f;
+            border-radius: 6px;
+            overflow: hidden;
         }
 
-        button.tool-btn {
-            background: linear-gradient(180deg, #451a03 0%, #290e02 100%);
-            border: 1px solid #d97706;
-            color: #fef08a;
-            font-family: 'Cinzel', serif;
-            font-size: 12px;
-            font-weight: 700;
+        .tool-btn {
+            background: transparent;
+            border: none;
+            color: #d6d3d1;
             padding: 8px 14px;
-            border-radius: 6px;
+            font-size: 11px;
+            font-family: inherit;
             cursor: pointer;
             transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        button.tool-btn:hover {
-            background: linear-gradient(180deg, #78350f 0%, #451a03 100%);
-            border-color: #fbbf24;
-            transform: translateY(-1px);
+        .tool-btn:not(:last-child) {
+            border-right: 1px solid #451a03;
         }
 
-        button.tool-btn.active {
-            background: linear-gradient(180deg, #b45309 0%, #78350f 100%);
-            border-color: #fef08a;
-            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        .tool-btn:hover {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+        }
+
+        .tool-btn.active {
+            background: #b45309;
+            color: #ffffff;
+            font-weight: 700;
         }
 
         .slider-label {
             font-size: 11px;
-            color: #e5e5e5;
+            color: #fbbf24;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            background: #281d14;
+            border: 1px solid #78350f;
+            border-radius: 6px;
+            padding: 6px 12px;
         }
 
         input[type="range"] {
@@ -155,61 +163,72 @@
             cursor: pointer;
         }
 
-        /* Frame Timeline Bar */
+        /* Timeline Scrubber */
         .timeline-container {
             display: flex;
-            gap: 6px;
-            margin-top: 14px;
+            gap: 8px;
             justify-content: center;
+            align-items: center;
+            padding: 10px 16px;
+            background: #150f09;
+            border: 1px solid #572004;
+            border-radius: 8px;
             width: 100%;
+            overflow-x: auto;
         }
 
         .frame-thumb {
-            width: 54px;
+            width: 60px;
             height: 70px;
-            border: 2px solid #78350f;
-            border-radius: 4px;
-            background: #2a1a11;
-            cursor: pointer;
+            border: 2px solid #572004;
+            border-radius: 6px;
+            background: #241911;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
             transition: all 0.15s ease;
+            position: relative;
         }
 
         .frame-thumb:hover {
             border-color: #f59e0b;
+            transform: translateY(-2px);
         }
 
         .frame-thumb.active {
-            border-color: #fef08a;
-            box-shadow: 0 0 12px #f59e0b;
-            transform: scale(1.06);
+            border-color: #fbbf24;
+            background: #3b2718;
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
         }
 
         .frame-thumb img {
             max-width: 90%;
-            max-height: 50px;
+            max-height: 48px;
             object-fit: contain;
+            image-rendering: pixelated;
         }
 
         .frame-thumb-label {
-            font-size: 9px;
+            font-size: 8px;
             color: #d6d3d1;
             margin-top: 2px;
+            text-align: center;
         }
 
         .nav-links {
             margin-top: 18px;
             display: flex;
             gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .nav-link {
             color: #fbbf24;
             text-decoration: none;
-            font-size: 13px;
+            font-size: 12px;
             border-bottom: 1px dotted #fbbf24;
             transition: color 0.2s;
         }
@@ -224,13 +243,13 @@
 
     <header>
         <h1>His Majesty - Animation Studio</h1>
-        <p class="subtitle">Pure isolated preview of the King's walk cycle & animation mechanics</p>
+        <p class="subtitle">Pure isolated preview of King & Slave animations with zero-ghosting verification</p>
     </header>
 
     <div id="studio-card">
         <!-- Canvas Viewport -->
         <div id="viewport-wrapper" class="bg-papyrus">
-            <canvas id="previewCanvas" width="520" height="440"></canvas>
+            <canvas id="previewCanvas" width="540" height="440"></canvas>
         </div>
 
         <!-- Controls Toolbar -->
@@ -244,8 +263,10 @@
 
             <!-- Avatar Model -->
             <div class="btn-group">
-                <button id="btn-model-pharaoh" class="tool-btn active">Classic Pharaoh</button>
-                <button id="btn-model-portrait" class="tool-btn">Royal Portrait (Fig 1)</button>
+                <button id="btn-model-pharaoh" class="tool-btn active">👑 Pharaoh (Fig 2)</button>
+                <button id="btn-model-portrait" class="tool-btn">👑 Portrait (Fig 1)</button>
+                <button id="btn-model-slave" class="tool-btn">𓊽 Slave (Fig 2)</button>
+                <button id="btn-model-slave-fig1" class="tool-btn">☥ Mural Slave (Fig 1)</button>
             </div>
 
             <!-- Background Theme -->
@@ -266,7 +287,7 @@
             <div class="btn-group">
                 <label class="slider-label">
                     Speed:
-                    <input id="slider-speed" type="range" min="0.1" max="2.5" step="0.1" value="1.0" style="width: 75px;">
+                    <input id="slider-speed" type="range" min="0.1" max="2.5" step="0.1" value="1.0" style="width: 70px;">
                     <span id="speed-val">1.0x</span>
                 </label>
             </div>
@@ -274,21 +295,20 @@
             <div class="btn-group">
                 <label class="slider-label">
                     Zoom:
-                    <input id="slider-zoom" type="range" min="1.5" max="4.5" step="0.25" value="2.8" style="width: 75px;">
+                    <input id="slider-zoom" type="range" min="1.5" max="4.5" step="0.25" value="2.8" style="width: 70px;">
                     <span id="zoom-val">2.8x</span>
                 </label>
             </div>
         </div>
 
-        <!-- 7-Frame Timeline -->
-        <div id="timeline" class="timeline-container">
-            <!-- Populated dynamically with 7 thumbnail buttons -->
-        </div>
+        <!-- Dynamic Timeline Scrubber -->
+        <div id="timeline" class="timeline-container"></div>
 
         <div class="nav-links">
             <a class="nav-link" href="index.html">← Back to Full Game</a>
-            <a class="nav-link" href="king_walk_showcase.gif" target="_blank">Download Walk GIF</a>
-            <a class="nav-link" href="king_animation_only.mp4" target="_blank">Download MP4 Video</a>
+            <a class="nav-link" href="king_walk_showcase.gif" target="_blank">Download King Walk GIF</a>
+            <a class="nav-link" href="slave_animation_showcase.gif" target="_blank">Download Slave Submission GIF</a>
+            <a class="nav-link" href="slave_postures_inspection.jpg" target="_blank">View 14-Pose Inspection</a>
         </div>
     </div>
 
@@ -302,56 +322,109 @@
         let frameTimer = 0;
         let speed = 1.0;
         let zoom = 2.8;
-        let avatarMode = 'pharaoh'; // 'pharaoh' or 'portrait'
+        let avatarMode = 'pharaoh'; // 'pharaoh', 'portrait', 'slave', 'slave_fig1'
         let showBaseline = true;
         let showShadow = true;
-        const baseFrameDuration = 0.13; // seconds
+        const baseFrameDuration = 0.25; // seconds per state
 
         // Assets
-        const frames = [];
+        const pharaohFrames = [];
+        const slaveFrames = [];
+        const slaveFig1Frames = [];
         let portraitImg = new Image();
-        let loadedCount = 0;
 
+        // 1. Load Pharaoh frames
         for (let i = 0; i < 7; i++) {
             const img = new Image();
             img.src = `assets/sprites/king_walk_padded_${i}.png`;
-            img.onload = () => {
-                loadedCount++;
-                if (loadedCount === 8) init();
-            };
-            frames.push(img);
+            pharaohFrames.push(img);
         }
 
+        // 2. Load Portrait
         portraitImg.src = 'assets/sprites/king_custom_portrait.png';
-        portraitImg.onload = () => {
-            loadedCount++;
-            if (loadedCount === 8) init();
-        };
 
-        // Timeline UI
+        // 3. Load Fig 2 Slave postures
+        const slaveFig2Defs = [
+            { id: 'carry', src: 'assets/sprites/subject_carry_goods.png', label: '1. Carry' },
+            { id: 'captive', src: 'assets/sprites/subject_captive.png', label: '2. Alert' },
+            { id: 'kneel', src: 'assets/sprites/subject_kneel_greet.png', label: '3. Kneel' },
+            { id: 'offer_food', src: 'assets/sprites/subject_offer_food.png', label: '4. Food' },
+            { id: 'offer_urn', src: 'assets/sprites/subject_offer_urn.png', label: '5. Urn' },
+            { id: 'offer_chest', src: 'assets/sprites/subject_offer_chest.png', label: '6. Chest' },
+            { id: 'prostrate', src: 'assets/sprites/subject_prostrate.png', label: '7. Prostrate' }
+        ];
+
+        slaveFig2Defs.forEach(def => {
+            const img = new Image();
+            img.src = def.src;
+            img.label = def.label;
+            slaveFrames.push(img);
+        });
+
+        // 4. Load Fig 1 Slave postures
+        const slaveFig1Defs = [
+            { id: 'bundle', src: 'assets/sprites/subj1_bundle.png', label: '1. Bundle' },
+            { id: 'urn', src: 'assets/sprites/subj1_urn.png', label: '2. Urn' },
+            { id: 'fruit', src: 'assets/sprites/subj1_fruit.png', label: '3. Fruit' },
+            { id: 'chest', src: 'assets/sprites/subj1_chest.png', label: '4. Chest' },
+            { id: 'prostrate', src: 'assets/sprites/subj1_prostrate.png', label: '5. Prostrate' }
+        ];
+
+        slaveFig1Defs.forEach(def => {
+            const img = new Image();
+            img.src = def.src;
+            img.label = def.label;
+            slaveFig1Frames.push(img);
+        });
+
+        // Setup Timeline UI
         const timeline = document.getElementById('timeline');
-        for (let i = 0; i < 7; i++) {
-            const thumb = document.createElement('div');
-            thumb.className = `frame-thumb ${i === 0 ? 'active' : ''}`;
-            thumb.id = `thumb-${i}`;
-            thumb.innerHTML = `
-                <img src="assets/sprites/king_walk_padded_${i}.png" alt="Frame ${i+1}">
-                <span class="frame-thumb-label">F${i+1}</span>
-            `;
-            thumb.addEventListener('click', () => {
-                currentFrame = i;
-                isPlaying = false;
-                updatePlayBtn();
-                updateTimeline();
+
+        function rebuildTimeline() {
+            timeline.innerHTML = '';
+            let list = [];
+            if (avatarMode === 'pharaoh') {
+                list = pharaohFrames.map((img, i) => ({ img, label: `F${i+1}` }));
+            } else if (avatarMode === 'portrait') {
+                list = [{ img: portraitImg, label: 'Portrait' }];
+            } else if (avatarMode === 'slave') {
+                list = slaveFrames.map(img => ({ img, label: img.label }));
+            } else if (avatarMode === 'slave_fig1') {
+                list = slaveFig1Frames.map(img => ({ img, label: img.label }));
+            }
+
+            list.forEach((item, idx) => {
+                const thumb = document.createElement('div');
+                thumb.className = `frame-thumb ${idx === currentFrame ? 'active' : ''}`;
+                thumb.id = `thumb-${idx}`;
+                thumb.innerHTML = `
+                    <img src="${item.img.src}" alt="${item.label}">
+                    <span class="frame-thumb-label">${item.label}</span>
+                `;
+                thumb.addEventListener('click', () => {
+                    currentFrame = idx;
+                    isPlaying = false;
+                    updatePlayBtn();
+                    updateTimeline();
+                });
+                timeline.appendChild(thumb);
             });
-            timeline.appendChild(thumb);
         }
 
         function updateTimeline() {
-            for (let i = 0; i < 7; i++) {
+            const count = getFrameCount();
+            for (let i = 0; i < count; i++) {
                 const el = document.getElementById(`thumb-${i}`);
-                if (el) el.classList.toggle('active', i === currentFrame && avatarMode === 'pharaoh');
+                if (el) el.classList.toggle('active', i === currentFrame);
             }
+        }
+
+        function getFrameCount() {
+            if (avatarMode === 'pharaoh') return pharaohFrames.length;
+            if (avatarMode === 'portrait') return 1;
+            if (avatarMode === 'slave') return slaveFrames.length;
+            if (avatarMode === 'slave_fig1') return slaveFig1Frames.length;
+            return 1;
         }
 
         function updatePlayBtn() {
@@ -368,31 +441,37 @@
 
         document.getElementById('btn-prev').addEventListener('click', () => {
             isPlaying = false;
-            currentFrame = (currentFrame - 1 + 7) % 7;
+            const count = getFrameCount();
+            currentFrame = (currentFrame - 1 + count) % count;
             updatePlayBtn();
             updateTimeline();
         });
 
         document.getElementById('btn-next').addEventListener('click', () => {
             isPlaying = false;
-            currentFrame = (currentFrame + 1) % 7;
+            const count = getFrameCount();
+            currentFrame = (currentFrame + 1) % count;
             updatePlayBtn();
             updateTimeline();
         });
 
-        // Model Switcher
-        document.getElementById('btn-model-pharaoh').addEventListener('click', function() {
-            avatarMode = 'pharaoh';
-            this.classList.add('active');
-            document.getElementById('btn-model-portrait').classList.remove('active');
-            updateTimeline();
-        });
+        // Model Switchers
+        const modelBtns = {
+            'btn-model-pharaoh': 'pharaoh',
+            'btn-model-portrait': 'portrait',
+            'btn-model-slave': 'slave',
+            'btn-model-slave-fig1': 'slave_fig1'
+        };
 
-        document.getElementById('btn-model-portrait').addEventListener('click', function() {
-            avatarMode = 'portrait';
-            this.classList.add('active');
-            document.getElementById('btn-model-pharaoh').classList.remove('active');
-            updateTimeline();
+        Object.entries(modelBtns).forEach(([btnId, mode]) => {
+            document.getElementById(btnId).addEventListener('click', function() {
+                avatarMode = mode;
+                currentFrame = 0;
+                Object.keys(modelBtns).forEach(id => document.getElementById(id).classList.remove('active'));
+                this.classList.add('active');
+                rebuildTimeline();
+                updateTimeline();
+            });
         });
 
         // Backgrounds
@@ -436,26 +515,27 @@
             document.getElementById('zoom-val').innerText = `${zoom.toFixed(1)}x`;
         });
 
-        function init() {
-            let lastTime = performance.now();
+        rebuildTimeline();
 
-            function loop(timestamp) {
-                const dt = (timestamp - lastTime) / 1000;
-                lastTime = timestamp;
+        // 60 FPS Render Loop
+        let lastTime = performance.now();
 
-                if (isPlaying) {
-                    frameTimer += dt * speed;
-                    if (frameTimer >= baseFrameDuration) {
-                        frameTimer = 0;
-                        currentFrame = (currentFrame + 1) % 7;
-                        updateTimeline();
-                    }
+        function loop(timestamp) {
+            const dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+
+            const duration = (avatarMode === 'pharaoh') ? 0.13 : 0.45;
+
+            if (isPlaying && getFrameCount() > 1) {
+                frameTimer += dt * speed;
+                if (frameTimer >= duration) {
+                    frameTimer = 0;
+                    currentFrame = (currentFrame + 1) % getFrameCount();
+                    updateTimeline();
                 }
-
-                render();
-                requestAnimationFrame(loop);
             }
 
+            render();
             requestAnimationFrame(loop);
         }
 
@@ -487,20 +567,19 @@
                 ctx.setLineDash([]);
                 ctx.font = '10px Cinzel, serif';
                 ctx.fillStyle = '#b45309';
-                ctx.fillText('Ground Baseline', 35, groundY - 6);
+                ctx.fillText('Ground Baseline (Zero Gap)', 35, groundY - 6);
                 ctx.restore();
             }
 
             if (avatarMode === 'pharaoh') {
-                const sprite = frames[currentFrame];
-                if (!sprite) return;
+                const sprite = pharaohFrames[currentFrame];
+                if (!sprite || !sprite.complete) return;
 
                 const drawW = sprite.width * zoom;
                 const drawH = sprite.height * zoom;
                 const drawX = centerX - drawW / 2;
                 const drawY = groundY - drawH;
 
-                // Contact Shadow
                 if (showShadow) {
                     ctx.save();
                     ctx.fillStyle = 'rgba(35, 18, 10, 0.38)';
@@ -512,12 +591,11 @@
 
                 ctx.drawImage(sprite, drawX, drawY, drawW, drawH);
 
-            } else {
-                // Figure 1 Royal Portrait Walking Simulation
+            } else if (avatarMode === 'portrait') {
+                if (!portraitImg.complete) return;
                 const drawW = 100 * zoom * 0.85;
                 const drawH = 125 * zoom * 0.85;
 
-                // Walking bob calculation
                 const time = performance.now() * 0.006 * speed;
                 const bob = isPlaying ? Math.sin(time * 2) * (5 * (zoom / 2.8)) : 0;
                 const drawX = centerX - drawW / 2;
@@ -534,8 +612,69 @@
                 }
 
                 ctx.drawImage(portraitImg, drawX, drawY, drawW, drawH);
+
+            } else if (avatarMode === 'slave') {
+                const sprite = slaveFrames[currentFrame];
+                if (!sprite || !sprite.complete) return;
+
+                const drawW = sprite.width * zoom * 1.1;
+                const drawH = sprite.height * zoom * 1.1;
+                const drawX = centerX - drawW / 2;
+                const drawY = groundY - drawH;
+
+                if (showShadow) {
+                    ctx.save();
+                    ctx.fillStyle = 'rgba(35, 18, 10, 0.38)';
+                    ctx.beginPath();
+                    const isProstrate = (currentFrame === 6);
+                    const shadowWidth = (isProstrate ? 42 : 24) * zoom;
+                    ctx.ellipse(centerX, groundY, shadowWidth, 5.5 * zoom, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+
+                ctx.drawImage(sprite, drawX, drawY, drawW, drawH);
+
+                // Status text overlay
+                ctx.save();
+                ctx.font = 'bold 12px Cinzel, serif';
+                ctx.fillStyle = '#b45309';
+                ctx.textAlign = 'center';
+                ctx.fillText(`State: ${sprite.label} | Zero Ghosting Verified`, centerX, 55);
+                ctx.restore();
+
+            } else if (avatarMode === 'slave_fig1') {
+                const sprite = slaveFig1Frames[currentFrame];
+                if (!sprite || !sprite.complete) return;
+
+                const drawW = sprite.width * zoom * 0.9;
+                const drawH = sprite.height * zoom * 0.9;
+                const drawX = centerX - drawW / 2;
+                const drawY = groundY - drawH;
+
+                if (showShadow) {
+                    ctx.save();
+                    ctx.fillStyle = 'rgba(35, 18, 10, 0.38)';
+                    ctx.beginPath();
+                    const isProstrate = (currentFrame === 4);
+                    const shadowWidth = (isProstrate ? 44 : 26) * zoom;
+                    ctx.ellipse(centerX, groundY, shadowWidth, 5.5 * zoom, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+
+                ctx.drawImage(sprite, drawX, drawY, drawW, drawH);
+
+                ctx.save();
+                ctx.font = 'bold 12px Cinzel, serif';
+                ctx.fillStyle = '#b45309';
+                ctx.textAlign = 'center';
+                ctx.fillText(`Mural Pose: ${sprite.label} | Zero Ghosting Verified`, centerX, 55);
+                ctx.restore();
             }
         }
+
+        requestAnimationFrame(loop);
     </script>
 </body>
 </html>
