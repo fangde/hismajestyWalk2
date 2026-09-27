@@ -308,21 +308,17 @@ class King {
     }
 
     renderRoyalAura(ctx, screen, renderScale) {
-        ctx.save();
-        const time = performance.now() * 0.002;
-        const auraRadius = (this.isBlessing ? this.blessRadius : 110) * (screen.zoom || 1);
+        // Divine illumination only active when King bestows blessings
+        if (!this.isBlessing) return;
 
-        // Ground illumination ellipse
+        ctx.save();
+        const auraRadius = this.blessRadius;
+
+        // Ground illumination ellipse during blessing
         const grad = ctx.createRadialGradient(screen.x, screen.y, 0, screen.x, screen.y, auraRadius);
-        if (this.isBlessing) {
-            grad.addColorStop(0, 'rgba(251, 191, 36, 0.35)');
-            grad.addColorStop(0.6, 'rgba(245, 158, 11, 0.15)');
-            grad.addColorStop(1, 'rgba(217, 119, 6, 0)');
-        } else {
-            grad.addColorStop(0, 'rgba(251, 191, 36, 0.18)');
-            grad.addColorStop(0.7, 'rgba(217, 119, 6, 0.05)');
-            grad.addColorStop(1, 'rgba(217, 119, 6, 0)');
-        }
+        grad.addColorStop(0, 'rgba(251, 191, 36, 0.40)');
+        grad.addColorStop(0.5, 'rgba(245, 158, 11, 0.18)');
+        grad.addColorStop(1, 'rgba(217, 119, 6, 0)');
 
         ctx.fillStyle = grad;
         ctx.beginPath();
