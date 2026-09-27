@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>His Majesty - King Animation Studio</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&display=swap">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            background-color: #120e0a;
+            color: #fef08a;
+            font-family: 'Cinzel', Georgia, serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #fbbf24;
+            letter-spacing: 2px;
+            text-shadow: 0 0 16px rgba(245, 158, 11, 0.6);
+            margin-bottom: 6px;
+        }
+
+        p.subtitle {
+            font-size: 13px;
+            color: #d6d3d1;
+            letter-spacing: 1px;
+        }
+
+        #studio-card {
+            background: #1c140d;
+            border: 2px solid #b45309;
+            border-radius: 12px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.8), 0 0 24px rgba(217, 119, 6, 0.25);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 820px;
+        }
+
+        #viewport-wrapper {
+            position: relative;
+            width: 520px;
+            height: 440px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #78350f;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        /* Background Themes */
+        .bg-papyrus {
+            background: linear-gradient(180deg, #f7eedf 0%, #ecdcc6 100%);
+        }
+        .bg-dark {
+            background: radial-gradient(circle at center, #241911 0%, #0d0906 100%);
+        }
+        .bg-sunset {
+            background: linear-gradient(180deg, #fdba74 0%, #ea580c 50%, #7c2d12 100%);
+        }
+        .bg-checker {
+            background-color: #2b221a;
+            background-image: 
+                linear-gradient(45deg, #1f1711 25%, transparent 25%), 
+                linear-gradient(-45deg, #1f1711 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #1f1711 75%), 
+                linear-gradient(-45deg, transparent 75%, #1f1711 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+
+        #previewCanvas {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+
+        /* Controls Panel */
+        .controls-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            background: rgba(14, 10, 7, 0.7);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #78350f;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        button.tool-btn {
+            background: linear-gradient(180deg, #451a03 0%, #290e02 100%);
+            border: 1px solid #d97706;
+            color: #fef08a;
+            font-family: 'Cinzel', serif;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        button.tool-btn:hover {
+            background: linear-gradient(180deg, #78350f 0%, #451a03 100%);
+            border-color: #fbbf24;
+            transform: translateY(-1px);
+        }
+
+        button.tool-btn.active {
+            background: linear-gradient(180deg, #b45309 0%, #78350f 100%);
+            border-color: #fef08a;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        }
+
+        .slider-label {
+            font-size: 11px;
+            color: #e5e5e5;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        input[type="range"] {
+            accent-color: #fbbf24;
+            cursor: pointer;
+        }
+
+        /* Frame Timeline Bar */
+        .timeline-container {
+            display: flex;
+            gap: 6px;
+            margin-top: 14px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .frame-thumb {
+            width: 54px;
+            height: 70px;
+            border: 2px solid #78350f;
+            border-radius: 4px;
+            background: #2a1a11;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .frame-thumb:hover {
+            border-color: #f59e0b;
+        }
+
+        .frame-thumb.active {
+            border-color: #fef08a;
+            box-shadow: 0 0 12px #f59e0b;
+            transform: scale(1.06);
+        }
+
+        .frame-thumb img {
+            max-width: 90%;
+            max-height: 50px;
+            object-fit: contain;
+        }
+
+        .frame-thumb-label {
+            font-size: 9px;
+            color: #d6d3d1;
+            margin-top: 2px;
+        }
+
+        .nav-links {
+            margin-top: 18px;
+            display: flex;
+            gap: 16px;
+        }
+
+        .nav-link {
+            color: #fbbf24;
+            text-decoration: none;
+            font-size: 13px;
+            border-bottom: 1px dotted #fbbf24;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #ffffff;
+            border-bottom-style: solid;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>His Majesty - Animation Studio</h1>
+        <p class="subtitle">Pure isolated preview of the King's walk cycle & animation mechanics</p>
+    </header>
+
+    <div id="studio-card">
+        <!-- Canvas Viewport -->
+        <div id="viewport-wrapper" class="bg-papyrus">
+            <canvas id="previewCanvas" width="520" height="440"></canvas>
+        </div>
+
+        <!-- Controls Toolbar -->
+        <div class="controls-toolbar">
+            <!-- Playback -->
+            <div class="btn-group">
+                <button id="btn-play" class="tool-btn active">⏸ Pause</button>
+                <button id="btn-prev" class="tool-btn">◀ Step</button>
+                <button id="btn-next" class="tool-btn">Step ▶</button>
+            </div>
+
+            <!-- Avatar Model -->
+            <div class="btn-group">
+                <button id="btn-model-pharaoh" class="tool-btn active">Classic Pharaoh</button>
+                <button id="btn-model-portrait" class="tool-btn">Royal Portrait (Fig 1)</button>
+            </div>
+
+            <!-- Background Theme -->
+            <div class="btn-group">
+                <button id="btn-bg-papyrus" class="tool-btn active">Papyrus</button>
+                <button id="btn-bg-dark" class="tool-btn">Dark</button>
+                <button id="btn-bg-checker" class="tool-btn">Checker</button>
+                <button id="btn-bg-sunset" class="tool-btn">Sunset</button>
+            </div>
+
+            <!-- Guides & Shadows -->
+            <div class="btn-group">
+                <button id="btn-guide" class="tool-btn active">📏 Baseline</button>
+                <button id="btn-shadow" class="tool-btn active">Shadow</button>
+            </div>
+
+            <!-- Speed & Zoom -->
+            <div class="btn-group">
+                <label class="slider-label">
+                    Speed:
+                    <input id="slider-speed" type="range" min="0.1" max="2.5" step="0.1" value="1.0" style="width: 75px;">
+                    <span id="speed-val">1.0x</span>
+                </label>
+            </div>
+
+            <div class="btn-group">
+                <label class="slider-label">
+                    Zoom:
+                    <input id="slider-zoom" type="range" min="1.5" max="4.5" step="0.25" value="2.8" style="width: 75px;">
+                    <span id="zoom-val">2.8x</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- 7-Frame Timeline -->
+        <div id="timeline" class="timeline-container">
+            <!-- Populated dynamically with 7 thumbnail buttons -->
+        </div>
+
+        <div class="nav-links">
+            <a class="nav-link" href="index.html">← Back to Full Game</a>
+            <a class="nav-link" href="king_walk_showcase.gif" target="_blank">Download Walk GIF</a>
+            <a class="nav-link" href="king_animation_only.mp4" target="_blank">Download MP4 Video</a>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('previewCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // State
+        let isPlaying = true;
+        let currentFrame = 0;
+        let frameTimer = 0;
+        let speed = 1.0;
+        let zoom = 2.8;
+        let avatarMode = 'pharaoh'; // 'pharaoh' or 'portrait'
+        let showBaseline = true;
+        let showShadow = true;
+        const baseFrameDuration = 0.13; // seconds
+
+        // Assets
+        const frames = [];
+        let portraitImg = new Image();
+        let loadedCount = 0;
+
+        for (let i = 0; i < 7; i++) {
+            const img = new Image();
+            img.src = `assets/sprites/king_walk_padded_${i}.png`;
+            img.onload = () => {
+                loadedCount++;
+                if (loadedCount === 8) init();
+            };
+            frames.push(img);
+        }
+
+        portraitImg.src = 'assets/sprites/king_custom_portrait.png';
+        portraitImg.onload = () => {
+            loadedCount++;
+            if (loadedCount === 8) init();
+        };
+
+        // Timeline UI
+        const timeline = document.getElementById('timeline');
+        for (let i = 0; i < 7; i++) {
+            const thumb = document.createElement('div');
+            thumb.className = `frame-thumb ${i === 0 ? 'active' : ''}`;
+            thumb.id = `thumb-${i}`;
+            thumb.innerHTML = `
+                <img src="assets/sprites/king_walk_padded_${i}.png" alt="Frame ${i+1}">
+                <span class="frame-thumb-label">F${i+1}</span>
+            `;
+            thumb.addEventListener('click', () => {
+                currentFrame = i;
+                isPlaying = false;
+                updatePlayBtn();
+                updateTimeline();
+            });
+            timeline.appendChild(thumb);
+        }
+
+        function updateTimeline() {
+            for (let i = 0; i < 7; i++) {
+                const el = document.getElementById(`thumb-${i}`);
+                if (el) el.classList.toggle('active', i === currentFrame && avatarMode === 'pharaoh');
+            }
+        }
+
+        function updatePlayBtn() {
+            const btn = document.getElementById('btn-play');
+            btn.innerText = isPlaying ? '⏸ Pause' : '▶ Play';
+            btn.classList.toggle('active', isPlaying);
+        }
+
+        // Event Listeners
+        document.getElementById('btn-play').addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            updatePlayBtn();
+        });
+
+        document.getElementById('btn-prev').addEventListener('click', () => {
+            isPlaying = false;
+            currentFrame = (currentFrame - 1 + 7) % 7;
+            updatePlayBtn();
+            updateTimeline();
+        });
+
+        document.getElementById('btn-next').addEventListener('click', () => {
+            isPlaying = false;
+            currentFrame = (currentFrame + 1) % 7;
+            updatePlayBtn();
+            updateTimeline();
+        });
+
+        // Model Switcher
+        document.getElementById('btn-model-pharaoh').addEventListener('click', function() {
+            avatarMode = 'pharaoh';
+            this.classList.add('active');
+            document.getElementById('btn-model-portrait').classList.remove('active');
+            updateTimeline();
+        });
+
+        document.getElementById('btn-model-portrait').addEventListener('click', function() {
+            avatarMode = 'portrait';
+            this.classList.add('active');
+            document.getElementById('btn-model-pharaoh').classList.remove('active');
+            updateTimeline();
+        });
+
+        // Backgrounds
+        const viewport = document.getElementById('viewport-wrapper');
+        const bgBtns = {
+            'btn-bg-papyrus': 'bg-papyrus',
+            'btn-bg-dark': 'bg-dark',
+            'btn-bg-checker': 'bg-checker',
+            'btn-bg-sunset': 'bg-sunset'
+        };
+
+        Object.entries(bgBtns).forEach(([btnId, bgClass]) => {
+            document.getElementById(btnId).addEventListener('click', function() {
+                viewport.className = bgClass;
+                Object.keys(bgBtns).forEach(id => document.getElementById(id).classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Guides
+        document.getElementById('btn-guide').addEventListener('click', function() {
+            showBaseline = !showBaseline;
+            this.classList.toggle('active', showBaseline);
+        });
+
+        document.getElementById('btn-shadow').addEventListener('click', function() {
+            showShadow = !showShadow;
+            this.classList.toggle('active', showShadow);
+        });
+
+        // Sliders
+        const speedSlider = document.getElementById('slider-speed');
+        speedSlider.addEventListener('input', (e) => {
+            speed = parseFloat(e.target.value);
+            document.getElementById('speed-val').innerText = `${speed.toFixed(1)}x`;
+        });
+
+        const zoomSlider = document.getElementById('slider-zoom');
+        zoomSlider.addEventListener('input', (e) => {
+            zoom = parseFloat(e.target.value);
+            document.getElementById('zoom-val').innerText = `${zoom.toFixed(1)}x`;
+        });
+
+        function init() {
+            let lastTime = performance.now();
+
+            function loop(timestamp) {
+                const dt = (timestamp - lastTime) / 1000;
+                lastTime = timestamp;
+
+                if (isPlaying) {
+                    frameTimer += dt * speed;
+                    if (frameTimer >= baseFrameDuration) {
+                        frameTimer = 0;
+                        currentFrame = (currentFrame + 1) % 7;
+                        updateTimeline();
+                    }
+                }
+
+                render();
+                requestAnimationFrame(loop);
+            }
+
+            requestAnimationFrame(loop);
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const groundY = canvas.height * 0.76;
+            const centerX = canvas.width / 2;
+
+            // Draw Alignment Guides
+            if (showBaseline) {
+                ctx.save();
+                ctx.strokeStyle = 'rgba(180, 83, 9, 0.45)';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([6, 4]);
+
+                // Ground line
+                ctx.beginPath();
+                ctx.moveTo(30, groundY);
+                ctx.lineTo(canvas.width - 30, groundY);
+                ctx.stroke();
+
+                // Vertical center guide
+                ctx.beginPath();
+                ctx.moveTo(centerX, 40);
+                ctx.lineTo(centerX, groundY + 20);
+                ctx.stroke();
+
+                ctx.setLineDash([]);
+                ctx.font = '10px Cinzel, serif';
+                ctx.fillStyle = '#b45309';
+                ctx.fillText('Ground Baseline', 35, groundY - 6);
+                ctx.restore();
+            }
+
+            if (avatarMode === 'pharaoh') {
+                const sprite = frames[currentFrame];
+                if (!sprite) return;
+
+                const drawW = sprite.width * zoom;
+                const drawH = sprite.height * zoom;
+                const drawX = centerX - drawW / 2;
+                const drawY = groundY - drawH;
+
+                // Contact Shadow
+                if (showShadow) {
+                    ctx.save();
+                    ctx.fillStyle = 'rgba(35, 18, 10, 0.38)';
+                    ctx.beginPath();
+                    ctx.ellipse(centerX + 6 * zoom, groundY, 25 * zoom, 5.5 * zoom, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+
+                ctx.drawImage(sprite, drawX, drawY, drawW, drawH);
+
+            } else {
+                // Figure 1 Royal Portrait Walking Simulation
+                const drawW = 100 * zoom * 0.85;
+                const drawH = 125 * zoom * 0.85;
+
+                // Walking bob calculation
+                const time = performance.now() * 0.006 * speed;
+                const bob = isPlaying ? Math.sin(time * 2) * (5 * (zoom / 2.8)) : 0;
+                const drawX = centerX - drawW / 2;
+                const drawY = groundY - drawH + bob;
+
+                if (showShadow) {
+                    ctx.save();
+                    ctx.fillStyle = 'rgba(35, 18, 10, 0.38)';
+                    ctx.beginPath();
+                    const shadowWidth = (28 - bob * 0.5) * zoom;
+                    ctx.ellipse(centerX + 8 * zoom, groundY, shadowWidth, 6 * zoom, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+
+                ctx.drawImage(portraitImg, drawX, drawY, drawW, drawH);
+            }
+        }
+    </script>
+</body>
+</html>

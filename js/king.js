@@ -41,7 +41,7 @@ class King {
         // Visual dimensions
         this.width = 75;
         this.height = 115;
-        this.scale = 1.6; // High-res rendering scale
+        this.scale = 2.0; // High-res rendering scale
 
         // Entourage
         this.parasolBearer = {
